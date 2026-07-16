@@ -1,0 +1,133 @@
+# YouTube Data API OAuth Owner Access — LLM Reference
+
+## Overview
+
+This repository ships a Hermes skill for connecting owner-authorized YouTube channels through the official YouTube Data API v3 and Google OAuth 2.0 Desktop app flow. It is designed for agents and subagents that need durable, verified YouTube owner context without exposing secrets in chat.
+
+The skill is intentionally procedural: it tells an agent how to guide the owner through Google Cloud setup, run a local OAuth callback server, save token files locally, and verify the selected channel through the API.
+
+## Core Safety Policy
+
+- Do not ask for passwords.
+- Do not ask for 2FA or recovery codes.
+- Do not ask for raw cookies or session tokens.
+- Do not ask the user to paste OAuth authorization codes, access tokens, refresh tokens, or full client-secret JSON contents into chat.
+- Inspect OAuth client JSON only for safe metadata: exists, client type, project id, has client id, has client secret, redirect URIs.
+- Store OAuth token JSON only locally.
+- Do not pass token JSON contents into prompts or subagent context.
+- Deletion is forbidden unless the user separately approves a specific deletion target.
+
+## Google Cloud Setup
+
+The owner configures Google Cloud Console:
+
+1. Select the OAuth project.
+2. Enable YouTube Data API v3.
+3. Configure Google Auth Platform.
+4. Open Audience.
+5. Add every authorizing account as Test users while the app is in Testing.
+6. Open APIs & Services → Credentials.
+7. Create or find OAuth 2.0 Client ID with type Desktop app.
+8. Download JSON.
+9. Save JSON locally.
+
+## Local OAuth Flow
+
+Recommended scopes:
+
+- https://www.googleapis.com/auth/youtube
+- https://www.googleapis.com/auth/yt-analytics.readonly
+
+Read-only inventory can use:
+
+- https://www.googleapis.com/auth/youtube.readonly
+
+For Brand Accounts, force account/channel selection with:
+
+```python
+prompt="select_account consent"
+```
+
+The user opens the generated authorization URL and performs Google login directly in the browser. Hermes waits for the callback and writes token JSON to a local token path.
+
+## Verification
+
+The first verification is:
+
+```text
+channels.list(mine=true)
+```
+
+Expected successful result:
+
+- `CHANNELS_COUNT` is at least 1.
+- The returned channel id/title/custom URL matches the intended channel.
+
+For owner-visible video inventory, use:
+
+```text
+search.list(forMine=True, type="video")
+videos.list(part="status")
+```
+
+This can count public, unlisted, and private videos visible to the authorized owner context.
+
+## Common Errors
+
+### 403 app not verified / access_denied
+
+Cause: OAuth app is in Testing and the account is not a Test user.
+
+Fix: Google Auth Platform → Audience → Test users → Add users.
+
+### YouTube Data API v3 disabled
+
+Cause: `youtube.googleapis.com` is disabled in the OAuth project.
+
+Fix: Enable YouTube Data API v3 in Google Cloud Console.
+
+### MismatchingStateError
+
+Cause: stale callback URL or old OAuth tab mixed with a new server.
+
+Fix: kill old OAuth process, close localhost tabs, start a fresh OAuth run, provide only the newest URL.
+
+### ERR_CONNECTION_REFUSED
+
+Cause: local callback server is no longer running or the wrong host/port was opened.
+
+Fix: restart OAuth and open only the fresh URL.
+
+### CHANNELS_COUNT: 0
+
+Cause: OAuth succeeded for a Google identity with no selected YouTube channel, often a personal account instead of a Brand Account.
+
+Fix: confirm YouTube Studio shows the target channel; rerun OAuth with `prompt="select_account consent"`; choose the target Brand Account/channel during consent.
+
+## Repository Files
+
+| Path | Purpose |
+|------|---------|
+| `SKILL.md` | The reusable Hermes skill. |
+| `README.md` | GitHub landing page. |
+| `llms.txt` | Short LLM discovery card. |
+| `llms-full.txt` | Full LLM-oriented reference. |
+| `.gitignore` | Blocks OAuth JSON, token folders, cookies, `.env`, and editor files. |
+| `LICENSE` | MIT license text. |
+
+## Intended Use
+
+A channel subagent should receive only:
+
+- target channel handle/title;
+- expected account email;
+- token file path;
+- allowed operations;
+- deletion prohibition;
+- verification requirement.
+
+It should not receive token JSON contents, client-secret JSON contents, cookies, passwords, 2FA codes, or recovery codes.
+
+## License
+
+MIT. Author: Maxim Osovsky.

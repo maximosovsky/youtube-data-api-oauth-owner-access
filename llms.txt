@@ -1,0 +1,20 @@
+# YouTube Data API OAuth Owner Access
+
+> A no-secrets Hermes skill for connecting owner-authorized YouTube channels through official YouTube Data API OAuth.
+
+## About
+
+This repository contains a Hermes skill that documents a safe YouTube owner-access workflow: enable YouTube Data API v3, configure Google Auth Platform, add Test users, download an OAuth 2.0 Desktop app JSON locally, run a local OAuth callback, save token files locally, and verify the selected channel with `channels.list(mine=true)`. It explicitly forbids pasted passwords, 2FA codes, cookies, raw tokens, and client secrets in chat.
+
+## Links
+
+- Repository: https://github.com/maximosovsky/youtube-data-api-oauth-owner-access
+- Skill: ./SKILL.md
+- Full LLM reference: ./llms-full.txt
+
+## Metadata
+
+- Author: Maxim Osovsky
+- License: MIT
+- Runtime: Hermes Agent
+- Domain: YouTube, Google OAuth, owner-authorized channel operations
