@@ -291,10 +291,10 @@ Fix:
 For each connected channel, keep a local token file named clearly, for example:
 
 ```text
-oauth_tokens/maximosovsky_educamp_tv_token.json
-oauth_tokens/7-years_world_problems_rimmile_token.json
-oauth_tokens/smdbar_leskdpl_token.json
-oauth_tokens/zhanzhuang_7713mobile_token.json
+oauth_tokens/channel_a_owner_token.json
+oauth_tokens/channel_b_owner_token.json
+oauth_tokens/brand_channel_owner_token.json
+oauth_tokens/example_channel_oauth_token.json
 ```
 
 A channel subagent should receive only:
