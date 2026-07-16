@@ -18,7 +18,7 @@
 
 <!-- Preview image placeholder: add a real screenshot/GIF here when one exists. -->
 
-<a href="#-quick-start">Quick Start</a> · <a href="#-features">Features</a> · <a href="#-tech-stack">Tech Stack</a> · <a href="#-roadmap">Roadmap</a> · <a href="#-license">License</a>
+<a href="#-connect-a-youtube-channel">Connect</a> · <a href="#-quick-start">Quick Start</a> · <a href="#-features">Features</a> · <a href="#-tech-stack">Tech Stack</a> · <a href="#-roadmap">Roadmap</a> · <a href="#-license">License</a>
 
 </div>
 
@@ -44,6 +44,33 @@ The workflow is designed for multi-channel operators who need repeatable access 
 | Private/unlisted inventory check | Includes a `search.list(forMine=True)` pattern for owner-visible video counts and privacy breakdowns. |
 | Error playbook | Documents fixes for app-not-verified 403, disabled API 403, stale OAuth state, localhost refusal, and zero-channel OAuth. |
 | Safe subagent policy | Defines allowed channel operations and blocks deletion unless the user separately approves a specific target. |
+
+---
+
+## 🔌 Connect a YouTube Channel
+
+1. In Google Cloud Console, select your OAuth project.
+2. Enable **YouTube Data API v3**.
+3. Configure **Google Auth Platform**.
+4. Open **Audience** and add the channel owner account as a **Test user** while the app is in Testing.
+5. Open **APIs & Services → Credentials**.
+6. Create or select an **OAuth 2.0 Client ID** with type **Desktop app**.
+7. Click **Download JSON** and save the file locally. Do not paste it into chat.
+8. Run the local OAuth flow from [`SKILL.md`](SKILL.md#oauth-script-template).
+9. In the browser, sign in as the channel owner and choose the correct **Brand Account/channel** if Google shows a chooser.
+10. Verify access with:
+
+```text
+channels.list(mine=true)
+```
+
+A successful connection returns the expected channel ID, title, and custom URL.
+
+> [!WARNING]
+> Do not paste passwords, 2FA codes, cookies, OAuth codes, client-secret JSON, access tokens, or refresh tokens into chat.
+
+> [!NOTE]
+> If `CHANNELS_COUNT: 0`, you probably authorized the personal Google identity instead of the YouTube Brand Account. Restart OAuth with `prompt="select_account consent"` and choose the target channel.
 
 ---
 
