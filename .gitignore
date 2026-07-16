@@ -1,0 +1,18 @@
+# Local OAuth artifacts / secrets
+*.json
+!package.json
+!*.schema.json
+oauth_tokens/
+tokens/
+credentials/
+client_secret*.json
+*client_secret*.json
+*cookies*.txt
+*.env
+.env
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
